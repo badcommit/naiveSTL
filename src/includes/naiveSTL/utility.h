@@ -26,6 +26,8 @@ namespace NaiveSTL {
         pair(const T1 &a, const T2 &b);
         pair<T1, T2>& operator = (const pair<T1, T2>& pr);
 
+
+        void swap(pair& pr);
     public:
         template <class U, class V>
         friend bool operator == (const pair<U, V> &lhs, const pair<U, V>& rhs);
@@ -44,6 +46,12 @@ namespace NaiveSTL {
     template<class T1, class T2>
     bool operator!=(const pair<T1, T2> &lhs, const pair<T1, T2> &rhs) {
         return !(lhs == rhs);
+    }
+
+    template<class T1, class T2>
+    void pair<T1, T2>::swap(pair<T1, T2> &pr) {
+        NaiveSTL::swap(first, pr.first);
+        NaiveSTL::swap(second, pr.second);
     }
 
     template<class T1, class T2>
