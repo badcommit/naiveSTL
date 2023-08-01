@@ -13,6 +13,14 @@ namespace NaiveSTL {
         b = temp;
     }
 
+    template<class T>
+    void swap(T* a, T* b) {
+        T temp = *a;
+        *a = *b;
+        *b = temp;
+    }
+
+
     template<class T1, class T2>
     struct pair {
 
