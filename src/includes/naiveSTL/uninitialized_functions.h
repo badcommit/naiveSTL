@@ -68,7 +68,13 @@ namespace NaiveSTL {
         for (; first != last; ++first, ++i){
             construct((result + i), *first);
         }
-        return result + (last - first);
+        return result + i;
+    }
+
+    template<class ForwardIterator, class InputIterator>
+    ForwardIterator uninitialized_copy(InputIterator first, InputIterator last, ForwardIterator result) {
+        typedef typename _type_traits<ForwardIterator>::is_POD_type is_POD_type;
+        return _uninitialized_copy(first, last, result, is_POD_type());
     }
 
     template<class ForwardIterator, class Size, class T>

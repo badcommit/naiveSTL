@@ -8,7 +8,7 @@
 #include <concepts>
 
 #include "naiveSTL/utility.h"
-#include "naiveSTL/impl/ref.impl.h"
+#include "naiveSTL/ref.h"
 
 namespace NaiveSTL {
 
@@ -147,7 +147,7 @@ namespace NaiveSTL {
         typedef T element_type;
     private:
         template<class Type>
-        using ref_t = NaiveSTL::Impl::ref_cnt_t<Type>;
+        using ref_t = NaiveSTL::ref_cnt_t<Type>;
     public:
         explicit shared_ptr(T *p = nullptr) : ref_(new ref_t<T>(p)) {}
 

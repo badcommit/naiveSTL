@@ -8,7 +8,7 @@
 #include <new>
 
 #include "naiveSTL/type_traits.h"
-
+#include "naiveSTL/iterator.h"
 
 namespace NaiveSTL {
     template<class T1, class T2>

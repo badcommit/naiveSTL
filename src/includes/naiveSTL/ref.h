@@ -2,14 +2,14 @@
 // Created by Zhang Shawn on 7/28/23.
 //
 
-#ifndef NAIVESTL_REF_IMPL_H
-#define NAIVESTL_REF_IMPL_H
+#ifndef NAIVESTL_REF_H
+#define NAIVESTL_REF_H
 
 #include <atomic>
 #include <functional>
 #include <memory>
 
-namespace NaiveSTL::Impl {
+namespace NaiveSTL {
     template<class T>
     struct _default_delete {
         void operator()(T *ptr) {
@@ -85,4 +85,4 @@ namespace NaiveSTL::Impl {
 }
 
 
-#endif //NAIVESTL_REF_IMPL_H
+#endif //NAIVESTL_REF_H

@@ -3,7 +3,7 @@
 //
 
 #include "naiveSTL/vector.h"
-#include "naiveSTL/impl/vector.impl.h"
+#include "../src/vector/vector.impl.cpp"
 #include <gtest/gtest.h>
 
 
