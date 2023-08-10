@@ -14,7 +14,7 @@ namespace NaiveSTL {
     }
 
     template<class T>
-    void swap(T* a, T* b) {
+    void swap(T *a, T *b) {
         T temp = *a;
         *a = *b;
         *b = temp;
@@ -31,21 +31,24 @@ namespace NaiveSTL {
         pair() = default;
 
         pair(const pair<T1, T2> &pr);
+
         pair(const T1 &a, const T2 &b);
-        pair<T1, T2>& operator = (const pair<T1, T2>& pr);
+
+        pair<T1, T2> &operator=(const pair<T1, T2> &pr);
 
 
-        void swap(pair& pr);
+        void swap(pair &pr);
+
     public:
-        template <class U, class V>
-        friend bool operator == (const pair<U, V> &lhs, const pair<U, V>& rhs);
+        template<class U, class V>
+        friend bool operator==(const pair<U, V> &lhs, const pair<U, V> &rhs);
 
-        template <class U, class V>
-        friend bool operator != (const pair<U, V> &lhs, const pair<U, V>& rhs);
-
+        template<class U, class V>
+        friend bool operator!=(const pair<U, V> &lhs, const pair<U, V> &rhs);
 
 
     };
+
     template<class T1, class T2>
     bool operator==(const pair<T1, T2> &lhs, const pair<T1, T2> &rhs) {
         return lhs.first == rhs.first && lhs.second == rhs.second;
@@ -69,8 +72,8 @@ namespace NaiveSTL {
     pair<T1, T2>::pair(const T1 &a, const T2 &b) : first(a), second(b) {}
 
     template<class T1, class T2>
-    pair<T1, T2>& pair<T1, T2>::operator = (const pair<T1, T2>& pr){
-        if (this != &pr){
+    pair<T1, T2> &pair<T1, T2>::operator=(const pair<T1, T2> &pr) {
+        if (this != &pr) {
             first = pr.first;
             second = pr.second;
         }
@@ -79,8 +82,27 @@ namespace NaiveSTL {
 
 
     template<class U, class V>
-    pair<U, V> make_pair(const U& u, const V& v){
+    pair<U, V> make_pair(const U &u, const V &v) {
         return pair<U, V>(u, v);
+    }
+
+    class noncopyable {
+    protected:
+        noncopyable() = default;
+
+        ~noncopyable() = default;
+
+    private:
+        noncopyable(const noncopyable &) = delete;
+
+        noncopyable &operator=(const noncopyable &) = delete;
+    };
+
+    template <typename T>
+    auto as_integer(T const value)
+    -> typename std::underlying_type<T>::type
+    {
+        return static_cast<typename std::underlying_type<T>::type>(value);
     }
 
 

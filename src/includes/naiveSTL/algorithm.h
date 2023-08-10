@@ -190,6 +190,10 @@ namespace NaiveSTL {
 
 
     }
+
+
+
+
 }
 
 #endif //NAIVESTL_ALGORITHM_H

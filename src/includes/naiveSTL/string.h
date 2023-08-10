@@ -52,6 +52,8 @@ namespace NaiveSTL{
 
         [[nodiscard]] bool empty() const { return start_ == finish_; }
 
+        [[nodiscard]] char * c_str() const { return start_; }
+
         const char& operator[](size_t pos) const { return *(start_ + pos); }
 
         ~string();

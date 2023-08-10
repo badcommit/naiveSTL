@@ -60,6 +60,22 @@ namespace NaiveSTL {
             data = nullptr;
         }
 
+        explicit unique_ptr(unique_ptr<T> &&data) : data_(std::move(data.data_)), deleter(std::move(data.deleter)) {
+            data.data_ = nullptr;
+            data.~unique_ptr();
+        }
+
+        unique_ptr & operator=(unique_ptr<T> &&data){
+            if(this != &data){
+                clean();
+                data_ = std::move(data.data_);
+                deleter = std::move(data.deleter);
+                data.data_ = nullptr;
+                data.~unique_ptr();
+            }
+            return *this;
+        }
+
         unique_ptr(const unique_ptr &) = delete;
 
         unique_ptr &operator=(const unique_ptr &) = delete;

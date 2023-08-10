@@ -11,11 +11,16 @@
 #include "naiveSTL/iterator.h"
 
 namespace NaiveSTL {
-    template<class T1, class T2>
-    inline void construct(T1 *ptr1, const T2 &value){
-        new(ptr1) T1(value);
+    template<class T1, class ...T2>
+    inline void construct(T1 *ptr1, T2&& ...value){
+        new(ptr1) T1(std::forward<T2>(value)...);
     }
 
+
+    template<class T1, class T2>
+    inline void construct(T1 *ptr1, T2&& value){
+        new(ptr1) T1(std::forward<T2>(value));
+    }
 
     template<class T>
     inline void _destroy(T *ptr){

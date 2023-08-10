@@ -1,5 +1,9 @@
 cmake_minimum_required(VERSION 3.10)
 
+
+
+enable_testing()
+
 include(GoogleTest)
 
 file(GLOB_RECURSE TEST_SOURCES "*.cpp")
