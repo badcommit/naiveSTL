@@ -12,6 +12,7 @@
 #include "naiveSTL/string.h"
 
 #include "naiveSTL/utility.h"
+
 namespace NaiveSTL{
     class Thread final : public noncopyable  {
         using thread_func = std::function<void()>;
@@ -23,7 +24,7 @@ namespace NaiveSTL{
             rhs.~Thread();
         }
 
-        Thread &operator=(Thread &&rhs) noexcept {
+        auto operator=(Thread &&rhs) noexcept -> Thread & {
             if (this != &rhs) {
                 func_ = std::move(rhs.func_);
                 pthreadId_ = rhs.pthreadId_;
@@ -39,9 +40,9 @@ namespace NaiveSTL{
         Thread &operator=(const Thread &) = delete;
 
         void start();
-        int join();
+        auto join() -> int;
 
-        [[nodiscard]] const string &name() const { return name_; }
+        [[nodiscard]] auto name() const -> const string & { return name_; }
 
         [[nodiscard]] pthread_t pthreadId() const { return pthreadId_; }
 
@@ -54,8 +55,8 @@ namespace NaiveSTL{
         ~Thread();
     private:
         void run();
-        static void*startThreadWrapper(void *obj);
-    private:
+        static auto startThreadWrapper(void *obj) -> void*;
+
         std::mutex mutex_;
         pthread_t pthreadId_{};
         thread_func func_;

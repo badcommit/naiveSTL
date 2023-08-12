@@ -7,61 +7,92 @@
 
 
 #include <functional>
+#include <utility>
 
 #include "naiveSTL/utility.h"
-#include "naiveSTL/net/event_loop.h"
 #include "naiveSTL/memory.h"
+#include "naiveSTL/net/common.h"
 
-namespace NaiveSTL {
+namespace NaiveSTL::Net {
 
-    class Channel: noncopyable {
+    class Channel {
     public:
+
+        struct UpdateInfo {
+            int fd;
+        };
+
         using EventCallback = std::function<void()>;
-        using ReadEventCallback = std::function<void(std::chrono::milliseconds)>;
+        using ReadEventCallback = std::function<void(timestamp)>;
+        using UpdateCallback = std::function<void(UpdateInfo)>;
+
 
         enum class Event {
             kNoneEvent = 0,
             kReadEvent = 1,
             kWriteEvent = 2,
         };
-    public:
-        Channel(shared_ptr<EventLoop> loop, int fd): fd_(fd), eventHandling_(false), addedToLoop_(false), loop_(loop) {};
-        ~Channel();
 
-        void handleEvent(std::chrono::milliseconds receiveTime);
-        void setReadCallback(ReadEventCallback && cb) {
-            readCallback_ = std::move(cb);
+        Channel(int fd, UpdateCallback updateCallback) : fd_(fd), updateCallback_(std::move(updateCallback)) {};
+
+        Channel(const Channel &) = delete;
+
+        Channel &operator=(const Channel &) = delete;
+
+        Channel(Channel &&) = default;
+
+
+        ~Channel() = default;
+
+        void handleEvent(timestamp receiveTime);
+
+
+        void setReadCallback(ReadEventCallback &&callback) {
+
+            readCallback_ = std::move(callback);
+            updateCallback_({fd()});
         }
 
-        void setWriteCallback(EventCallback && cb) {
-            writeCallback_ = std::move(cb);
+        void setWriteCallback(EventCallback &&callback) {
+            writeCallback_ = std::move(callback);
+            updateCallback_({fd()});
         }
 
-        void setCloseCallback(EventCallback && cb) {
-            closeCallback_ = std::move(cb);
+        void setCloseCallback(EventCallback &&callback) {
+            closeCallback_ = std::move(callback);
+            updateCallback_({fd()});
         }
 
-        void setErrorCallback(EventCallback && cb) {
-            errorCallback_ = std::move(cb);
+        void setErrorCallback(EventCallback &&callback) {
+            errorCallback_ = std::move(callback);
+            updateCallback_({fd()});
         }
 
-        [[nodiscard]] int fd() const { return fd_; }
+        [[nodiscard]] auto fd() const -> int { return fd_; }
 
         auto enableReading() { event_mask_ = event_mask_ | as_integer(Event::kReadEvent); }
 
+        auto disableReading() { event_mask_ = event_mask_ & ~as_integer(Event::kReadEvent); }
+
+        auto enableWriting() { event_mask_ = event_mask_ | as_integer(Event::kWriteEvent); }
+
+        auto disableWriting() { event_mask_ = event_mask_ & ~as_integer(Event::kWriteEvent); }
+
+        auto setRevents(int revents) { revents_ = revents; }
+
 
     private:
+
         const int fd_;
+        int revents_;
 
-        int event_mask_;
-
-        bool eventHandling_;
-        bool addedToLoop_;
+        int event_mask_{0};
         ReadEventCallback readCallback_;
         EventCallback writeCallback_;
         EventCallback closeCallback_;
         EventCallback errorCallback_;
-        shared_ptr<EventLoop> loop_;
+
+        UpdateCallback updateCallback_;
     };
 }
 

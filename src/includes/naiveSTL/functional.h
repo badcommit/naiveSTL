@@ -10,11 +10,11 @@ namespace NaiveSTL{
     template<class T>
     requires requires(T x, T y) { x < y; }
     struct less {
-        typedef T first_argument_type;
-        typedef T second_argument_type;
-        typedef bool result_type;
+        using first_argument_type = T;
+        using second_argument_type = T;
+        using result_type = bool;
 
-        result_type operator()(const first_argument_type &x, const second_argument_type &y) {
+        auto operator()(const first_argument_type &x, const second_argument_type &y) -> result_type {
             return x < y;
         }
     };
@@ -22,9 +22,9 @@ namespace NaiveSTL{
     template<class T>
     requires requires(T x, T y) { x == y; }
     struct equal_to {
-        typedef T first_argument_type;
-        typedef T second_argument_type;
-        typedef bool result_type;
+        using first_argument_type = T;
+        using second_argument_type = T;
+        using result_type = bool;
 
         result_type operator()(const first_argument_type &x, const second_argument_type &y) {
             return x == y;

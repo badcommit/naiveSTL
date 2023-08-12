@@ -2,7 +2,7 @@ add_subdirectory(allocator)
 add_subdirectory(string)
 add_subdirectory(vector)
 add_subdirectory(thread)
-
+add_subdirectory(net)
 
 add_library(naiveSTL STATIC ${ALL_OBJECT_FILES})
 
@@ -11,6 +11,7 @@ set(NAIVE_STL_LIBS
         naiveSTL_string
         naiveSTL_vector
         naiveSTL_thread
+        naiveSTL_net
         PARENT_SCOPE
         )
 

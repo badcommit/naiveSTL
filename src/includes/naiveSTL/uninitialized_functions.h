@@ -46,8 +46,8 @@ namespace NaiveSTL {
     }
 
     template<class ForwardIterator, class T, class Size>
-    requires Concept::Iteratorable<ForwardIterator> && Concept::Sizeable<Size>
-    ForwardIterator uninitialized_fill_n(ForwardIterator first, Size t, T &&x) {
+    requires Concept::Iteratorable<ForwardIterator> && Concept::Sizeable<Size> && std::is_move_constructible_v<T>
+    auto uninitialized_fill_n(ForwardIterator first, Size t, T &&x) -> ForwardIterator {
         for (; t >0; t--, ++first) {
             construct(&*first, std::forward<T>(x));
         }
@@ -55,7 +55,7 @@ namespace NaiveSTL {
     }
 
     template<class ForwardIterator, class Size, class T>
-    requires Concept::Iteratorable<ForwardIterator> && Concept::Sizeable<Size>
+    requires Concept::Iteratorable<ForwardIterator> && Concept::Sizeable<Size> && (!std::is_move_constructible_v<T>)
     ForwardIterator uninitialized_fill_n(ForwardIterator first, Size n, const T& x) {
         typedef typename _type_traits<ForwardIterator>::is_POD_type is_POD_type;
         return _uninitialized_fill_n(first, n, x, is_POD_type());

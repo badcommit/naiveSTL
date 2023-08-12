@@ -36,12 +36,11 @@ namespace NaiveSTL {
     private:
         void runInThread();
 
-    private:
         std::mutex mutex_;
-        const size_t maxQueueSize_;
+        size_t maxQueueSize_;
         std::condition_variable slot_cond_;
         std::condition_variable task_cond_;
-        const int numThreads_;
+        int numThreads_;
         std::atomic<bool> running_;
         std::atomic<bool> joined_;
         std::deque<Task> tasks_;

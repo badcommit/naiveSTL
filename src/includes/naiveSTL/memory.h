@@ -191,6 +191,8 @@ namespace NaiveSTL {
 
         const element_type *operator->() const { return ref_->get_data(); }
 
+        element_type *operator->()  { return ref_->get_data(); }
+
         size_t use_count() const { return ref_->count(); }
 
         ~shared_ptr() { decrease_ref(); }
@@ -241,8 +243,8 @@ namespace NaiveSTL {
         return !(sp == p);
     }
     template<class T, class...Args>
-    shared_ptr<T> make_shared(Args... args){
-        return shared_ptr<T>(new T(std::forward<Args>(args))...);
+    auto make_shared(Args... args) -> shared_ptr<T>{
+        return shared_ptr<T>(new T(std::forward<Args>(args)...));
     }
 
 

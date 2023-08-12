@@ -27,7 +27,7 @@ namespace NaiveSTL {
     public:
         T1 first;
         T2 second;
-    public:
+
         pair() = default;
 
         pair(const pair<T1, T2> &pr);
@@ -39,7 +39,7 @@ namespace NaiveSTL {
 
         void swap(pair &pr);
 
-    public:
+
         template<class U, class V>
         friend bool operator==(const pair<U, V> &lhs, const pair<U, V> &rhs);
 
@@ -100,9 +100,9 @@ namespace NaiveSTL {
 
     template <typename T>
     auto as_integer(T const value)
-    -> typename std::underlying_type<T>::type
+    -> std::underlying_type_t<T>
     {
-        return static_cast<typename std::underlying_type<T>::type>(value);
+        return static_cast<std::underlying_type_t<T>>(value);
     }
 
 

@@ -73,10 +73,10 @@ namespace NaiveSTL {
         const_reference operator[](size_type n) const { return *(start_ + n); }
 
         iterator begin() const noexcept { return start_; }
-        const_iterator cbegin() const noexcept { return start_; }
+        auto cbegin() const noexcept -> const_iterator { return start_; }
 
         iterator end() const noexcept { return finish_; }
-        const_iterator cend() const noexcept { return finish_; }
+        auto cend() const noexcept -> const_iterator { return finish_; }
 
         reference front() { return *start_; }
         const_reference front() const { return *start_; }
@@ -248,7 +248,7 @@ namespace NaiveSTL {
             auto temp_finish = temp_start;
 
             uninitialized_move(start_, position, temp_start);
-            uninitialized_fill_n(temp_start + diff, 1, std::forward<value_type>(value));
+            uninitialized_fill_n(temp_start + diff, 1, std::move(value));
             temp_finish = uninitialized_move(position, finish_, temp_start + diff + 1);
             data_allocator::deallocate(start_, capacity());
             start_ = temp_start;

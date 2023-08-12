@@ -6,7 +6,7 @@
 #include "naiveSTL/thread.h"
 
 
-void * NaiveSTL::Thread::startThreadWrapper(void *obj) {
+auto NaiveSTL::Thread::startThreadWrapper(void *obj) -> void * {
     auto *thread = static_cast<NaiveSTL::Thread *>(obj);
     thread->run();
     return nullptr;
@@ -29,7 +29,7 @@ void NaiveSTL::Thread::start() {
     started_ = true;
 
     auto ret = pthread_create(&pthreadId_, nullptr, &Thread::startThreadWrapper, this);
-    if(ret){
+    if(ret != 0){
         fprintf(stderr, "pthread_create error %d\n", ret);
         abort();
     }

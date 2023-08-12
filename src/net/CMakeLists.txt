@@ -1,0 +1,8 @@
+add_library(naiveSTL_net OBJECT channel.cpp common.cpp event_loop.cpp poll_poller.cpp)
+
+set(
+        ALL_OBJECT_FILES
+        ${ALL_OBJECT_FILES}
+        $<TARGET_OBJECTS:naiveSTL_net>
+        PARENT_SCOPE
+)

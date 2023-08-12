@@ -30,7 +30,7 @@ namespace NaiveSTL {
     //is not POD type
     template<class ForwardIterator>
     requires Concept::Iteratorable<ForwardIterator>
-    inline void _destroy(ForwardIterator first, ForwardIterator last, _false_type){
+    inline void _destroy(ForwardIterator first, ForwardIterator last, _false_type /*unused*/){
         for(; first != last; ++first){
             _destroy(&*first);
         }
@@ -38,7 +38,7 @@ namespace NaiveSTL {
 
     template<class ForwardIterator>
     requires Concept::Iteratorable<ForwardIterator>
-    inline void _destroy(__attribute__((unused)) ForwardIterator first, __attribute__((unused)) ForwardIterator last, _true_type){
+    inline void _destroy(__attribute__((unused)) ForwardIterator first, __attribute__((unused)) ForwardIterator last, _true_type /*unused*/){
 
     }
 

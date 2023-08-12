@@ -7,6 +7,7 @@
 
 #include "naiveSTL/alloc.h"
 #include <concepts>
+
 namespace NaiveSTL {
     template<class T>
     class allocator {
@@ -53,7 +54,9 @@ namespace NaiveSTL {
 
     template<class T>
     void allocator<T>::deallocate(T *ptr, size_t n) {
-        if (n == 0) return;
+        if (n == 0) {
+            return;
+        }
         alloc::deallocate(static_cast<void *>(ptr));
     }
 
@@ -74,14 +77,15 @@ namespace NaiveSTL {
 
     template<class T>
     void allocator<T>::destroy(T *first, T *last) {
-        for (; first != last; ++first)
+        for (; first != last; ++first) {
             first->~T();
+        }
     }
 
     namespace Concept {
         template<class Alloc, class T>
-        concept Allocable = requires(Alloc a, size_t size, T* ptr) {
-            { a.allocate(size) } -> std::same_as<T*>;
+        concept Allocable = requires(Alloc a, size_t size, T *ptr) {
+            { a.allocate(size) } -> std::same_as<T *>;
             { a.deallocate(ptr) } -> std::same_as<void>;
             { a.construct(ptr) } -> std::same_as<void>;
             { a.destroy(ptr) } -> std::same_as<void>;
