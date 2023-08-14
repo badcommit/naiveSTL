@@ -30,7 +30,7 @@ namespace NaiveSTL {
 
         void submit(Task &&func);
 
-        void waitUntilAllStarted();
+        void waitUntilAllTasksPicked();
 
 
     private:

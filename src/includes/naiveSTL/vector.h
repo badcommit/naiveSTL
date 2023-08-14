@@ -95,6 +95,7 @@ namespace NaiveSTL {
 
 
     private:
+
         template<class InputIterator>
         void allocateAndCopy(InputIterator first, InputIterator last);
 
@@ -284,17 +285,21 @@ namespace NaiveSTL {
     }
 
 
-    template<class T, class Alloc>
-    requires Concept::Allocable<Alloc, T>
-    void vector<T, Alloc>::push_back(const value_type &v) {
-        insert_aux(end(), v);
-    }
 
     template<class T, class Alloc>
     requires Concept::Allocable<Alloc, T>
     void vector<T, Alloc>::push_back(value_type &&v) {
         insert_aux(end(), std::move(v));
     }
+
+    template<class T, class Alloc>
+    requires Concept::Allocable<Alloc, T>
+    inline void vector<T, Alloc>::push_back(const value_type &v) {
+        insert_aux(end(), v);
+    }
+
+
+
 
     template<class T, class Alloc>
     requires Concept::Allocable<Alloc, T>

@@ -33,7 +33,7 @@ namespace NaiveSTL::thread_test {
         });
 
 
-        threadpool.waitUntilAllStarted();
+            threadpool.waitUntilAllTasksPicked();
         std::this_thread::sleep_for(std::chrono::milliseconds(2000));
         EXPECT_EQ(counter, 3);
 

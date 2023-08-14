@@ -39,7 +39,7 @@ void NaiveSTL::ThreadPool::stop() {
     }
 }
 
-void NaiveSTL::ThreadPool::waitUntilAllStarted(){
+void NaiveSTL::ThreadPool::waitUntilAllTasksPicked(){
     std::unique_lock<std::mutex> lock(mutex_);
     joined_ = true;
     while(!tasks_.empty()){

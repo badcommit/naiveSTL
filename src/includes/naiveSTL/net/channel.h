@@ -50,36 +50,53 @@ namespace NaiveSTL::Net {
         void setReadCallback(ReadEventCallback &&callback) {
 
             readCallback_ = std::move(callback);
-            updateCallback_({fd()});
+
         }
 
         void setWriteCallback(EventCallback &&callback) {
             writeCallback_ = std::move(callback);
-            updateCallback_({fd()});
+
         }
 
         void setCloseCallback(EventCallback &&callback) {
             closeCallback_ = std::move(callback);
-            updateCallback_({fd()});
+
         }
 
         void setErrorCallback(EventCallback &&callback) {
             errorCallback_ = std::move(callback);
-            updateCallback_({fd()});
+
         }
 
         [[nodiscard]] auto fd() const -> int { return fd_; }
 
-        auto enableReading() { event_mask_ = event_mask_ | as_integer(Event::kReadEvent); }
+        auto enableReading() {
+            event_mask_ = event_mask_ | as_integer(Event::kReadEvent);
+            updateCallback_({fd()});
+        }
 
-        auto disableReading() { event_mask_ = event_mask_ & ~as_integer(Event::kReadEvent); }
+        auto disableReading() {
+            event_mask_ = event_mask_ & ~as_integer(Event::kReadEvent);
+            updateCallback_({fd()});
+        }
 
-        auto enableWriting() { event_mask_ = event_mask_ | as_integer(Event::kWriteEvent); }
+        auto enableWriting() {
+            event_mask_ = event_mask_ | as_integer(Event::kWriteEvent);
+            updateCallback_({fd()});
+        }
 
-        auto disableWriting() { event_mask_ = event_mask_ & ~as_integer(Event::kWriteEvent); }
+        auto disableWriting() {
+            event_mask_ = event_mask_ & ~as_integer(Event::kWriteEvent);
+            updateCallback_({fd()});
+        }
 
         auto setRevents(int revents) { revents_ = revents; }
 
+        auto getRevents() const -> int { return revents_; }
+
+        auto getEventMask() const -> int { return event_mask_; }
+
+        auto setUpdateCallback(UpdateCallback &&callback) -> void { updateCallback_ = std::move(callback); }
 
     private:
 

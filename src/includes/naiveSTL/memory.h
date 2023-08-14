@@ -24,6 +24,13 @@ namespace NaiveSTL {
 
     template<class T>
     struct default_delete {
+
+        default_delete() = default;
+
+        template<class U>
+        requires std::derived_from<U, T>
+        default_delete(const default_delete<U> &other __attribute__((unused))) {}
+
         virtual void operator()(T *ptr) {
             delete ptr;
         }
@@ -47,29 +54,37 @@ namespace NaiveSTL {
         typedef element_type *pointer;
     private:
         element_type *data_;
-        deleter_type deleter;
+        deleter_type deleter_;
     public:
         explicit unique_ptr(pointer data = nullptr) : data_(data) {
 
         }
 
-        unique_ptr(T *data, const deleter_type &del) : data_(data), deleter(del) {}
+        unique_ptr(pointer data, const deleter_type &del) : data_(data), deleter_(del) {}
 
         explicit unique_ptr(T &&data) : data_(nullptr) {
             data_(std::forward<T>(data));
             data = nullptr;
         }
 
-        explicit unique_ptr(unique_ptr<T> &&data) : data_(std::move(data.data_)), deleter(std::move(data.deleter)) {
+        explicit unique_ptr(unique_ptr<T> &&data) : data_(std::move(data.data_)), deleter_(std::move(data.deleter_)) {
             data.data_ = nullptr;
-            data.~unique_ptr();
         }
 
-        unique_ptr & operator=(unique_ptr<T> &&data){
-            if(this != &data){
+        template<class U, class K> requires Concept::Deleter<U, K>
+        friend
+        class unique_ptr;
+
+
+        template<class U,class DU=default_delete<U>>
+        requires std::derived_from<U, T> &&Concept::Deleter<U, DU> && std::is_assignable_v<D, DU>
+        unique_ptr(unique_ptr<U, DU> &&data): data_(std::move(data.release())), deleter_(std::move(data.get_deleter())) {}
+
+        unique_ptr &operator=(unique_ptr<T> &&data) {
+            if (this != &data) {
                 clean();
                 data_ = std::move(data.data_);
-                deleter = std::move(data.deleter);
+                deleter_ = std::move(data.deleter_);
                 data.data_ = nullptr;
                 data.~unique_ptr();
             }
@@ -86,19 +101,25 @@ namespace NaiveSTL {
 
         explicit operator bool() const { return get() != nullptr; }
 
-        pointer release() {
+
+        void reset(pointer data = nullptr) {
+            clean();
+            data_ = data;
+        }
+
+        auto release() -> pointer {
             T *p = data_;
             data_ = nullptr;
             return p;
         }
 
-        pointer get() {
+        auto get() -> pointer {
             return data_;
         }
 
-        deleter_type &get_deleter() { return deleter; }
+        deleter_type &get_deleter() { return deleter_; }
 
-        const deleter_type &get_deleter() const { return deleter; }
+        const deleter_type &get_deleter() const { return deleter_; }
 
         const element_type &operator*() const { return *data_; }
 
@@ -108,13 +129,14 @@ namespace NaiveSTL {
 
         pointer operator->() { return data_; }
 
+
         ~unique_ptr() {
             clean();
         }
 
     private:
         inline void clean() {
-            deleter(data_);
+            deleter_(data_);
             data_ = nullptr;
         }
 
@@ -156,8 +178,7 @@ namespace NaiveSTL {
         return unique_ptr<T>(new T(std::forward<Args>(args)...));
     }
 
-    template<class T, class D=default_delete<T>>
-            requires Concept::Deleter<T, D>
+    template<class T, class D=default_delete<T>> requires Concept::Deleter<T, D>
     class shared_ptr {
     public:
         typedef T element_type;
@@ -171,7 +192,7 @@ namespace NaiveSTL {
         friend
         class cow_ptr;
 
-        shared_ptr(T *p, const D& del) : ref_(new ref_t<T>(p, del)) {}
+        shared_ptr(T *p, const D &del) : ref_(new ref_t<T>(p, del)) {}
 
         shared_ptr(const shared_ptr &sp) {
             copy_ref(sp.ref_);
@@ -191,7 +212,9 @@ namespace NaiveSTL {
 
         const element_type *operator->() const { return ref_->get_data(); }
 
-        element_type *operator->()  { return ref_->get_data(); }
+        element_type *operator->() { return ref_->get_data(); }
+
+        element_type *get() const { return ref_->get_data(); }
 
         size_t use_count() const { return ref_->count(); }
 
@@ -219,31 +242,37 @@ namespace NaiveSTL {
     };
 
     template<class T1, class T2>
-    bool operator == (const shared_ptr<T1>& lhs, const shared_ptr<T2>& rhs){
+    bool operator==(const shared_ptr<T1> &lhs, const shared_ptr<T2> &rhs) {
         return lhs.get() == rhs.get();
     }
+
     template<class T>
-    bool operator == (const shared_ptr<T>& sp, nullptr_t p){
+    bool operator==(const shared_ptr<T> &sp, nullptr_t p) {
         return sp.get() == p;
     }
+
     template<class T>
-    bool operator == (nullptr_t p, const shared_ptr<T>& sp){
+    bool operator==(nullptr_t p, const shared_ptr<T> &sp) {
         return sp == p;
     }
+
     template<class T1, class T2>
-    bool operator != (const shared_ptr<T1>& lhs, const shared_ptr<T2>& rhs){
+    bool operator!=(const shared_ptr<T1> &lhs, const shared_ptr<T2> &rhs) {
         return !(lhs == rhs);
     }
+
     template<class T>
-    bool operator != (const shared_ptr<T>& sp, nullptr_t p){
+    bool operator!=(const shared_ptr<T> &sp, nullptr_t p) {
         return !(sp == p);
     }
+
     template<class T>
-    bool operator != (nullptr_t p, const shared_ptr<T>& sp){
+    bool operator!=(nullptr_t p, const shared_ptr<T> &sp) {
         return !(sp == p);
     }
+
     template<class T, class...Args>
-    auto make_shared(Args... args) -> shared_ptr<T>{
+    auto make_shared(Args... args) -> shared_ptr<T> {
         return shared_ptr<T>(new T(std::forward<Args>(args)...));
     }
 

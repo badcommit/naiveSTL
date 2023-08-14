@@ -46,25 +46,25 @@ namespace NaiveSTL {
             }
         }
 
-        size_t count() const {
+        auto count() const -> size_t {
             return ncount_.load();
         }
 
-        T *get_data() const {
+        auto get_data() const -> T * {
             return data_;
         }
 
-        ref_cnt_t &operator++() {
+        auto operator++() -> ref_cnt_t & {
             ++ncount_;
             return *this;
         }
 
-        ref_cnt_t &operator--() {
+        auto operator--() -> ref_cnt_t & {
             --ncount_;
             return *this;
         }
 
-        ref_cnt_t operator--(int) {
+        auto operator--(int) -> ref_cnt_t {
             auto t = *this;
             --*this;
             return t;
@@ -74,12 +74,12 @@ namespace NaiveSTL {
     };
 
     template<class T>
-    bool operator==(const ref_cnt_t<T> &lhs, const ref_cnt_t<T> &rhs) {
+    auto operator==(const ref_cnt_t<T> &lhs, const ref_cnt_t<T> &rhs) -> bool {
         return lhs.get_data() == rhs.get_data();
     }
 
     template<class T>
-    bool operator!=(const ref_cnt_t<T> &lhs, const ref_cnt_t<T> &rhs) {
+    auto operator!=(const ref_cnt_t<T> &lhs, const ref_cnt_t<T> &rhs) -> bool {
         return !(lhs == rhs);
     }
 }

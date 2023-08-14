@@ -11,23 +11,31 @@
 
 namespace NaiveSTL::Net {
     using pollfd_t = struct pollfd;
-    class PollPoller:  Poller {
+    class PollPoller: public Poller {
     public:
         PollPoller() {};
 
         ~PollPoller() override = default;
 
-        virtual auto poll(vector<shared_ptr<Channel>>&,  vector<shared_ptr<Channel>>& active) -> void override;
+        auto poll(vector<shared_ptr<Channel>>& /*unused*/,  vector<shared_ptr<Channel>>& active) -> void override;
 
-        virtual void updateChannel(vector<shared_ptr<Channel>>&, int fd) override;
+        void notifyUpdateChannel(const shared_ptr<Channel>& /*unused*/) override;
+
+        auto getChannelByFd(const vector<shared_ptr<Channel>>&, int fd) -> shared_ptr<Channel> override;
 
 
-        [[nodiscard]] virtual auto hasChannel(vector<shared_ptr<Channel>>&, int fd) const -> bool  override;
+        [[nodiscard]] auto hasChannel(const vector<shared_ptr<Channel>>&, int fd) const -> bool  override;
+
+        auto  notifyNewChannel(const shared_ptr<Channel>& /*unused*/) -> void override;
+
+        auto notifyRemoveChannel(const shared_ptr<Channel>& /*unused*/) -> void override;
     private:
 
-        void fillActiveChannels(int numEvents,
-                                vector<shared_ptr<Channel>> &,
+        void fillActiveChannels(vector<shared_ptr<Channel>> &,
+                                int numEvents,
                                 vector<shared_ptr<Channel>>& ) const;
+
+
 
         vector<pollfd_t> pollfds_;
 

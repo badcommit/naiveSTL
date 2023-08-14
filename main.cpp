@@ -54,6 +54,6 @@ int main() {
         printf("hello world 4\n");
     });
 
-    threadpool.waitUntilAllStarted();
+    threadpool.waitUntilAllTasksPicked();
     return 0;
 }
