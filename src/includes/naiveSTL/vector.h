@@ -57,7 +57,7 @@ namespace NaiveSTL {
         vector& operator = (vector &&v) noexcept;
 
 
-        auto empty() const noexcept { return start_ == finish_; }
+        auto empty() const noexcept  { return start_ == finish_; }
 
         auto size() const noexcept { return finish_ - start_; }
 

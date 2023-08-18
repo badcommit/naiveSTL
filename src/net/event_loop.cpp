@@ -14,12 +14,29 @@ namespace NaiveSTL::Net {
         while (!quit_) {
 
             vector<shared_ptr<Channel>> active_channels;
-            mutex_.lock();
             vector<shared_ptr<Channel>> chans = channels_;
-            mutex_.unlock();
+            {
+                std::lock_guard lock(mutex_);
+                chans = active_channels;
+            }
+
             poller_->poll(chans, active_channels);
             for (auto && channel : active_channels) {
                 channel->handleEvent(timestamp());
+            }
+            {
+                vector<std::function<void()>> funcs;
+                {
+                    std::lock_guard lock(mutex_);
+                    for(auto && cb: callbacks_){
+                        funcs.push_back(std::move(cb));
+                    }
+                    callbacks_.clear();
+                }
+
+                for(auto && cb: funcs){
+                    cb();
+                }
             }
         }
     }
@@ -45,6 +62,13 @@ namespace NaiveSTL::Net {
         mutex_.unlock();
         poller_->notifyRemoveChannel(channel);
     }
+
+    void EventLoop::queueCallback(std::function<void()>&& callback) {
+        std::lock_guard lock(mutex_);
+        callbacks_.push_back(std::move(callback));
+    }
+
+
 
 
     void EventLoop::quit() {

@@ -33,7 +33,7 @@ namespace NaiveSTL::Net {
             kWriteEvent = 2,
         };
 
-        Channel(int fd, UpdateCallback updateCallback) : fd_(fd), updateCallback_(std::move(updateCallback)) {};
+        Channel(int fd) : fd_(fd) {};
 
         Channel(const Channel &) = delete;
 

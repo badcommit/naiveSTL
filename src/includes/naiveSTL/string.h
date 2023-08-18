@@ -56,6 +56,9 @@ namespace NaiveSTL{
 
         const char& operator[](size_t pos) const { return *(start_ + pos); }
 
+        auto begin() const  -> iterator {return start_;};
+        auto end() const -> iterator {return finish_; };
+
         ~string();
 
     private:

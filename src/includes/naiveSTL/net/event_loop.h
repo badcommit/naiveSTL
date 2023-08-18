@@ -22,15 +22,15 @@ namespace NaiveSTL::Net{
     public:
 
 
-        EventLoop(unique_ptr<Poller> && poller);
+        explicit EventLoop(unique_ptr<Poller> && poller);
 
         EventLoop(const EventLoop&) = delete;
 
-        EventLoop& operator=(const EventLoop&) = delete;
+        auto operator=(const EventLoop&) -> EventLoop& = delete;
 
         EventLoop(EventLoop&&) = delete;
 
-        EventLoop& operator=(EventLoop&&) = delete;
+        auto operator=(EventLoop&&) -> EventLoop& = delete;
 
 
         ~EventLoop();
@@ -43,19 +43,19 @@ namespace NaiveSTL::Net{
 
         void quit();
 
-
+        void queueCallback(std::function<void()> &&callback);
 
     private:
 
 
 
         auto handleUpdateChannel(const Channel::UpdateInfo& t __attribute__((unused))) -> void;
-
         unique_ptr<Poller> poller_;
         std::atomic<bool> quit_;
 
         vector<shared_ptr<Channel>> channels_;
 
+        vector<std::function<void()>> callbacks_;
 
         mutable std::mutex mutex_;
 

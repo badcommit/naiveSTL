@@ -22,9 +22,9 @@ namespace NaiveSTL::event_loop_test {
     public:
         MockPoller() = default;
 
-        MockPoller(std::function<void()> &&cb): cb_(std::move(cb)){};
+        explicit MockPoller(std::function<void()> &&cb): cb_(std::move(cb)){};
 
-        ~MockPoller() = default;
+        ~MockPoller() override = default;
 
         auto poll(vector<shared_ptr<Channel>> &a __attribute__((unused)),
                   vector<shared_ptr<Channel>> &active __attribute__((unused))) -> void override {
@@ -51,7 +51,10 @@ namespace NaiveSTL::event_loop_test {
     TEST(EVENT_LOOP, CHANNEL_TIRGGER_UPDATE_CALLBACK) {
         auto poller = make_unique<MockPoller>();
         std::atomic<int> counter = 0;
-        Channel channel(1, [&](auto &&) {
+
+        Channel channel(1);
+
+        channel.setUpdateCallback( [&](auto &&) {
             counter++;
         });
 
@@ -63,6 +66,28 @@ namespace NaiveSTL::event_loop_test {
 
         EXPECT_EQ(counter, 1);
 
+
+    }
+
+    TEST(EVENT_LOOP, LOOP_TRIGGER_CALLBACK) {
+        std::atomic<int> counter = 0;
+        auto poller = make_unique<MockPoller>([&](){
+        });
+
+
+        EventLoop loop(std::move(poller));
+        loop.queueCallback([&counter]() {
+            counter++;
+        });
+
+        Thread thread{[&]() {
+            loop.loop();
+        }, "loop!"};
+        thread.start();
+        std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+        loop.quit();
+        thread.join();
+        EXPECT_TRUE(counter>0);
 
     }
 

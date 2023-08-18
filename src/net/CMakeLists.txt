@@ -1,4 +1,7 @@
-add_library(naiveSTL_net OBJECT channel.cpp common.cpp event_loop.cpp poll_poller.cpp event_loop_thread.cpp event_loop_thread_pool.cpp)
+add_library(naiveSTL_net OBJECT channel.cpp common.cpp event_loop.cpp poll_poller.cpp event_loop_thread.cpp event_loop_thread_pool.cpp
+        tcp_connection.cpp
+        inet_address.cpp
+        socket.cpp)
 
 set(
         ALL_OBJECT_FILES

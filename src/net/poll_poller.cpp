@@ -12,7 +12,8 @@
 
 namespace NaiveSTL::Net {
     void PollPoller::poll(vector<shared_ptr<Channel>> &channels, vector<shared_ptr<Channel>> &active) {
-        int numEvents = ::poll(&*pollfds_.begin(), pollfds_.size(), -1);
+        constexpr int timeout = 500;
+        int numEvents = ::poll(&*pollfds_.begin(), pollfds_.size(), timeout);
         int savedErrno = errno;
         if (numEvents > 0) {
             fillActiveChannels(channels,numEvents, active);
@@ -30,7 +31,7 @@ namespace NaiveSTL::Net {
             int numEvents,
             vector<shared_ptr<NaiveSTL::Net::Channel>> &activeChannels) const -> void {
 
-        for (auto pollfd = pollfds_.begin(); pollfd != pollfds_.end() && numEvents > 0; pollfd++, numEvents--) {
+        for (auto *pollfd = pollfds_.begin(); pollfd != pollfds_.end() && numEvents > 0; pollfd++, numEvents--) {
             if (pollfd->revents > 0) {
                 for (auto&& ch: channels) {
                     if (ch->fd() == pollfd->fd) {

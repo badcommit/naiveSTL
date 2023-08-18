@@ -5,6 +5,8 @@
 #ifndef NAIVESTL_UTILITY_H
 #define NAIVESTL_UTILITY_H
 
+#include <type_traits>
+
 namespace NaiveSTL {
     template<class T>
     void swap(T &a, T &b) {

@@ -4,7 +4,10 @@ add_subdirectory(vector)
 add_subdirectory(thread)
 add_subdirectory(net)
 
-add_library(naiveSTL STATIC ${ALL_OBJECT_FILES})
+add_library(naiveSTL STATIC ${ALL_OBJECT_FILES}
+        includes/naiveSTL/net/socket.h
+        includes/naiveSTL/net/inet_address.h
+        includes/naiveSTL/net/sockops.h)
 
 set(NAIVE_STL_LIBS
         naiveSTL_allocator

@@ -18,6 +18,13 @@ namespace NaiveSTL {
         }
     }
 
+    template<class ForwardIterator>
+    void copy(ForwardIterator first, ForwardIterator last, ForwardIterator result) {
+        for (; first != last; ++first, ++result) {
+            *result = *first;
+        }
+    }
+
     inline void fill(char *first, char *last, const char &value) {
         memset(first, static_cast<unsigned char>(value), last - first);
     }
