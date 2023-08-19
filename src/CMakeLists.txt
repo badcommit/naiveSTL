@@ -7,7 +7,9 @@ add_subdirectory(net)
 add_library(naiveSTL STATIC ${ALL_OBJECT_FILES}
         includes/naiveSTL/net/socket.h
         includes/naiveSTL/net/inet_address.h
-        includes/naiveSTL/net/sockops.h)
+        includes/naiveSTL/net/sockops.h
+        includes/naiveSTL/net/tcp_server.h
+        includes/naiveSTL/net/tcp_client.h)
 
 set(NAIVE_STL_LIBS
         naiveSTL_allocator

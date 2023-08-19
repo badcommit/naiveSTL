@@ -12,6 +12,7 @@
 #include "naiveSTL/utility.h"
 #include "naiveSTL/memory.h"
 #include "naiveSTL/net/common.h"
+#include "socket.h"
 
 namespace NaiveSTL::Net {
 
@@ -33,13 +34,18 @@ namespace NaiveSTL::Net {
             kWriteEvent = 2,
         };
 
-        Channel(int fd) : fd_(fd) {};
+
+        Channel(Socket &&socket): socket_(make_unique<Socket>(std::move(socket))){}
 
         Channel(const Channel &) = delete;
 
         Channel &operator=(const Channel &) = delete;
 
         Channel(Channel &&) = default;
+
+        Socket& socket(){
+            return *socket_;
+        }
 
 
         ~Channel() = default;
@@ -68,7 +74,7 @@ namespace NaiveSTL::Net {
 
         }
 
-        [[nodiscard]] auto fd() const -> int { return fd_; }
+        [[nodiscard]] auto fd() const -> int { return socket_->fd(); }
 
         auto enableReading() {
             event_mask_ = event_mask_ | as_integer(Event::kReadEvent);
@@ -90,6 +96,9 @@ namespace NaiveSTL::Net {
             updateCallback_({fd()});
         }
 
+        bool isWriting() const { return event_mask_ & as_integer(Event::kWriteEvent); }
+        bool isReading() const { return event_mask_ & as_integer(Event::kReadEvent); }
+
         auto setRevents(int revents) { revents_ = revents; }
 
         auto getRevents() const -> int { return revents_; }
@@ -100,7 +109,7 @@ namespace NaiveSTL::Net {
 
     private:
 
-        const int fd_;
+        unique_ptr<Socket> socket_;
         int revents_;
 
         int event_mask_{0};

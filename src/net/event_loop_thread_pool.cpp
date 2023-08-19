@@ -15,7 +15,13 @@ namespace NaiveSTL::Net{
         }
     }
 
-    auto EventLoopThreadPool::getNextLoop() -> EventLoop& {
+    void EventLoopThreadPool::stop() {
+        for (const auto & thread : threads_) {
+            thread->stop();
+        }
+    }
+
+    auto EventLoopThreadPool::getNextLoop() -> shared_ptr<EventLoop>& {
         nxt_ = (nxt_ + 1) % (threads_.size());
         return threads_[nxt_]->getLoop();
     }

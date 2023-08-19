@@ -18,7 +18,13 @@ namespace NaiveSTL::Net{
 
         void start();
 
-        auto getNextLoop() -> EventLoop&;
+        void stop();
+
+        [[nodiscard]] auto size() const noexcept -> size_t {
+            return threadNum_;
+        }
+
+        auto getNextLoop() -> shared_ptr<EventLoop>& ;
     private:
         unique_ptr<Poller> poller_;
         vector<unique_ptr<EventLoopThread>> threads_;

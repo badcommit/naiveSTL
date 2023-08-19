@@ -12,7 +12,8 @@
 namespace NaiveSTL::Net{
     class EventLoopThread {
     public:
-        EventLoopThread(unique_ptr<Poller> && poller):loop_(make_unique<EventLoop>(std::move(poller))), thread_([this] { threadFunc(); }, "hello world") {
+        EventLoopThread(unique_ptr<Poller> && poller):loop_(make_shared<EventLoop>(std::move(poller))),
+        thread_([this] { threadFunc(); }, "hello world") {
 
         };
 
@@ -30,14 +31,14 @@ namespace NaiveSTL::Net{
 
         void stop();
 
-        auto getLoop() -> EventLoop& {
-            return *(loop_);
+        auto getLoop() -> shared_ptr<EventLoop>& {
+            return loop_;
         };
 
     private:
         void threadFunc();
 
-        unique_ptr<EventLoop> loop_;
+        shared_ptr<EventLoop> loop_;
         Thread thread_;
     };
 }

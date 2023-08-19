@@ -14,78 +14,30 @@
 
 namespace NaiveSTL::Net::SocketOps {
 
-    auto sockaddr_cast( void *const addr) -> struct sockaddr*
-    {
-        return static_cast<struct sockaddr*>(static_cast<void*>(addr));
-    }
+    auto sockaddr_cast( void *const addr) -> struct sockaddr*;
 
-    const struct sockaddr_in* sockaddr_in_cast(const struct sockaddr* addr)
-    {
-        return static_cast<const struct sockaddr_in*>(static_cast<const void*>(addr));
-    }
+    const struct sockaddr_in* sockaddr_in_cast(const struct sockaddr* addr);
 
-    void listenOrDie(int sockfd)
-    {
-        ::listen(sockfd, SOMAXCONN);
-    }
+    int createNonblockingOrDie(sa_family_t family);
 
-    void bindOrDie(int sockfd, const struct sockaddr* addr)
-    {
-        auto ret = ::bind(sockfd, addr, static_cast<socklen_t>(sizeof(struct sockaddr)));
-        assert(ret == 0);
-    }
+    void listenOrDie(int sockfd);
 
-    int connect(int sockfd, const struct sockaddr* addr)
-    {
-        auto ret = ::connect(sockfd, addr, static_cast<socklen_t>(sizeof(struct sockaddr)));
-        assert(ret == 0);
-        return ret;
-    }
+    void bindOrDie(int sockfd, const struct sockaddr* addr);
 
-    int accept(int sockfd, struct sockaddr_in* addr)
-    {
-        socklen_t addrlen = static_cast<socklen_t>(sizeof *addr);
-        int connfd = ::accept(sockfd, const_cast<sockaddr *>(sockaddr_cast(addr)),
-                              &addrlen);
+    int connect(int sockfd, const struct sockaddr* addr);
 
-        return connfd;
-    }
+    int accept(int sockfd, struct sockaddr_in* addr);
 
-    auto read(int sockfd, void *buf, size_t count) -> ssize_t
-    {
-        return ::read(sockfd, buf, count);
-    }
-    void close(int sockfd)
-    {
-        auto ret = ::close(sockfd);
-        assert(ret == 0);
-    }
+    auto read(int sockfd, void *buf, size_t count) -> ssize_t;
+    void close(int sockfd);
 
-    ssize_t write(int sockfd, const void *buf, size_t count)
-    {
-        return ::write(sockfd, buf, count);
-    }
+    ssize_t write(int sockfd, const void *buf, size_t count);
 
     void toIp(char* buf, size_t size,
-              const struct sockaddr* addr)
-    {
-
-        const struct sockaddr_in* addr4 = sockaddr_in_cast(addr);
-        ::inet_ntop(AF_INET, &addr4->sin_addr, buf, static_cast<socklen_t>(size));
-
-    }
+              const struct sockaddr* addr);
 
     void toIpPort(char* buf, size_t size,
-                           const struct sockaddr* addr)
-    {
-
-        toIp(buf, size, addr);
-        size_t end = ::strnlen(buf, 64);
-        const struct sockaddr_in* addr4 = sockaddr_in_cast(addr);
-        uint16_t port = (addr4->sin_port);
-        assert(size > end);
-        snprintf(buf+end, size-end, ":%u", port);
-    }
+                           const struct sockaddr* addr);
 
 
 

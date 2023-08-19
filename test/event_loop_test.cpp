@@ -52,7 +52,7 @@ namespace NaiveSTL::event_loop_test {
         auto poller = make_unique<MockPoller>();
         std::atomic<int> counter = 0;
 
-        Channel channel(1);
+        Channel channel(Socket{1});
 
         channel.setUpdateCallback( [&](auto &&) {
             counter++;

@@ -29,13 +29,15 @@ namespace NaiveSTL::Net {
             return *this;
         }
 
-
-
         void listen();
 
         int accept(InetAddress & peeraddr);
 
+        int connect(InetAddress &serveraddr);
+
         void bindAddress(InetAddress& localaddr);
+
+        void close();
     private:
         int sockfd_;
     };

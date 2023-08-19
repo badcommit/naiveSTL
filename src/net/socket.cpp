@@ -13,7 +13,10 @@ namespace NaiveSTL::Net {
         SocketOps::listenOrDie(sockfd_);
     }
 
-    int Socket::accept(InetAddress &peeraddr) {
+    void Socket::close() {
+        SocketOps::close(sockfd_);
+    }
+    [[nodiscard]]int Socket::accept(InetAddress &peeraddr) {
         struct sockaddr_in addr;
         memset(&addr,0, sizeof addr);
         int connfd = SocketOps::accept(sockfd_, &addr);
@@ -22,5 +25,9 @@ namespace NaiveSTL::Net {
             peeraddr.setSockAddrInet(addr);
         }
         return connfd;
+    }
+
+    int Socket::connect(NaiveSTL::Net::InetAddress &serveraddr)  {
+        return  SocketOps::connect(sockfd_, serveraddr.getSockAddr());
     }
 }

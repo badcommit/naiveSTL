@@ -206,7 +206,18 @@ namespace NaiveSTL {
             return *this;
         }
 
+        shared_ptr(shared_ptr && other)noexcept {
+            if(this!=&other){
+                this->ref_ = other.ref_;
+                other.ref_ = nullptr;
+            }
+        }
+
         const element_type &operator*() const {
+            return *ref_->get_data();
+        }
+
+        element_type &operator*() {
             return *ref_->get_data();
         }
 
@@ -240,6 +251,7 @@ namespace NaiveSTL {
 
 
     };
+
 
     template<class T1, class T2>
     bool operator==(const shared_ptr<T1> &lhs, const shared_ptr<T2> &rhs) {
